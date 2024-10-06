@@ -1,0 +1,169 @@
+{
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "$id": "http://127.0.0.1:5500/ProtonServerSettings/1.0/schema.json",
+    "title": "Server Configuration Schema",
+    "description": "Schema for ProtonNetServerSettings configuration file for SocketServer with validation rules. Some fields are conditionally required based on the values of other fields.",
+    "type": "object",
+    "properties": {
+        "TargetFramework": {
+            "type": "string",
+            "enum": [
+                "net46",
+                "net461",
+                "net462",
+                "net47",
+                "net471",
+                "net472",
+                "net48",
+                "net481",
+                "netcoreapp3.1",
+                "net6.0",
+                "net8.0"
+            ],
+            "description": "The target framework of the application.",
+            "default": "net8.0"
+        },
+        "TargetRuntime": {
+            "type": "string",
+            "description": "The runtime environment for the target framework.",
+            "default": "win-x64",
+            "if": {
+                "properties": {
+                    "TargetFramework": {
+                        "enum": [
+                            "net46",
+                            "net461",
+                            "net462",
+                            "net47",
+                            "net471",
+                            "net472",
+                            "net48",
+                            "net481"
+                        ]
+                    }
+                }
+            },
+            "then": {
+                "enum": [
+                    "win"
+                ]
+            },
+            "else": {
+                "if": {
+                    "properties": {
+                        "TargetFramework": {
+                            "enum": [
+                                "netcoreapp3.1",
+                                "net6.0",
+                                "net8.0"
+                            ]
+                        }
+                    }
+                },
+                "then": {
+                    "enum": [
+                        "linux-arm",
+                        "linux-arm64",
+                        "linux-x64",
+                        "osx-arm64",
+                        "osx-x64",
+                        "win-arm",
+                        "win-arm64",
+                        "win-x64",
+                        "win-x86"
+                    ]
+                }
+            }
+        },
+        "Instances": {
+            "type": "array",
+            "description": "A list of server instances with configuration details.",
+            "default": [
+                {
+                    "Name": "webapiserver",
+                    "Enable": true,
+                    "ServerType": "WebApi",
+                    "BinPath": "webapiserver",
+                    "AssemblyName": "XmobiTea.WebApiServer",
+                    "StartupSettingsFilePath": "StartupSettings.json",
+                    "Log4NetFilePath": "log4net.config",
+                    "StartupType": "auto"
+                }
+            ],
+            "items": {
+                "type": "object",
+                "properties": {
+                    "Name": {
+                        "type": "string",
+                        "description": "The name of the server instance.",
+                        "default": "ServerApplication"
+                    },
+                    "Enable": {
+                        "type": "boolean",
+                        "description": "Enable or disable the server instance.",
+                        "default": true
+                    },
+                    "ServerType": {
+                        "type": "string",
+                        "description": "Type of the server instance.",
+                        "enum": [
+                            "WebApi",
+                            "Socket"
+                        ]
+                    },
+                    "BinPath": {
+                        "type": "string",
+                        "description": "The binary path for the server instance and must in root/applications folder.",
+                        "examples": [
+                            "webapiserver",
+                            "socketserver",
+                            "serverapplication"
+                        ]
+                    },
+                    "AssemblyName": {
+                        "type": "string",
+                        "description": "The assembly name for the server instance.",
+                        "examples": [
+                            "XmobiTea.WebApiServer",
+                            "ServerApplication"
+                        ]
+                    },
+                    "StartupSettingsFilePath": {
+                        "type": "string",
+                        "description": "File path for the startup settings.",
+                        "default": "StartupSettings.json"
+                    },
+                    "Log4NetFilePath": {
+                        "type": "string",
+                        "description": "File path for the log4net configuration.",
+                        "default": "log4net.config"
+                    },
+                    "StartupType": {
+                        "type": "string",
+                        "description": "The startup type of the server instance.",
+                        "enum": [
+                            "auto",
+                            "disabled"
+                        ],
+                        "default": "auto"
+                    }
+                },
+                "required": [
+                    "Name",
+                    "Enable",
+                    "ServerType",
+                    "BinPath",
+                    "AssemblyName",
+                    "StartupSettingsFilePath",
+                    "Log4NetFilePath",
+                    "StartupType"
+                ]
+            }
+        }
+    },
+    "required": [
+        "TargetFramework",
+        "TargetRuntime",
+        "Instances"
+    ]
+}

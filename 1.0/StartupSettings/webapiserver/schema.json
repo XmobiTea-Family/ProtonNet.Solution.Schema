@@ -1,0 +1,248 @@
+{
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "$id": "http://127.0.0.1:5500/StartupSettings/1.0/schema1.json",
+    "title": "Server Configuration Schema",
+    "description": "Schema for StartupSettings configuration file for WebApiServer with validation rules. Some fields are conditionally required based on the values of other fields.",
+    "type": "object",
+    "properties": {
+        "Name": {
+            "type": "string",
+            "description": "The name of the startup configuration.",
+            "default": "ServerApplication"
+        },
+        "MaxPendingRequest": {
+            "type": "integer",
+            "description": "The maximum number of pending requests allowed.",
+            "default": 1000
+        },
+        "MaxSessionPendingRequest": {
+            "type": "integer",
+            "description": "The maximum number of pending requests per session.",
+            "default": 100
+        },
+        "MaxSessionRequestPerSecond": {
+            "type": "integer",
+            "description": "The maximum number of requests per session per second.",
+            "default": 50
+        },
+        "HttpServer": {
+            "type": "object",
+            "description": "The HTTP server configuration settings.",
+            "properties": {
+                "Enable": {
+                    "type": "boolean",
+                    "description": "The value indicating whether the HTTP server is enabled.",
+                    "default": true
+                },
+                "Address": {
+                    "type": "string",
+                    "description": "The address on which the HTTP server will listen.",
+                    "default": "0.0.0.0"
+                },
+                "Port": {
+                    "type": "integer",
+                    "description": "The port on which the HTTP server will listen.",
+                    "minimum": 1,
+                    "maximum": 65535,
+                    "default": 22202
+                },
+                "SessionConfig": {
+                    "type": "object",
+                    "description": "The session configuration settings for the Http server.",
+                    "properties": {
+                        "AcceptorBacklog": {
+                            "type": "integer",
+                            "description": "The backlog limit for accepting connections.",
+                            "default": 1024
+                        },
+                        "DualMode": {
+                            "type": "boolean",
+                            "description": "The value indicating whether dual-mode sockets are enabled.",
+                            "default": false
+                        },
+                        "KeepAlive": {
+                            "type": "boolean",
+                            "description": "The value indicating whether the keep-alive option is enabled.",
+                            "default": true
+                        },
+                        "TcpKeepAliveTime": {
+                            "type": "integer",
+                            "description": "The keep-alive time for TCP connections in seconds.",
+                            "default": 10
+                        },
+                        "TcpKeepAliveInterval": {
+                            "type": "integer",
+                            "description": "The interval between keep-alive probes for TCP connections in seconds.",
+                            "default": 10
+                        },
+                        "TcpKeepAliveRetryCount": {
+                            "type": "integer",
+                            "description": "The number of keep-alive probes before timing out the TCP connection.",
+                            "default": 10
+                        },
+                        "NoDelay": {
+                            "type": "boolean",
+                            "description": "The value indicating whether the Nagle's algorithm is disabled (NoDelay).",
+                            "default": true
+                        },
+                        "ReuseAddress": {
+                            "type": "boolean",
+                            "description": "The value indicating whether the address can be reused.",
+                            "default": false
+                        },
+                        "ExclusiveAddressUse": {
+                            "type": "boolean",
+                            "description": "The value indicating whether the socket will have exclusive access to the address.",
+                            "default": false
+                        },
+                        "ReceiveBufferLimit": {
+                            "type": "integer",
+                            "description": "The limit for the receive buffer size in bytes.",
+                            "default": 0
+                        },
+                        "ReceiveBufferCapacity": {
+                            "type": "integer",
+                            "description": "The capacity of the receive buffer in bytes.",
+                            "default": 1024
+                        },
+                        "SendBufferLimit": {
+                            "type": "integer",
+                            "description": "The limit for the send buffer size in bytes.",
+                            "default": 0
+                        },
+                        "SendBufferCapacity": {
+                            "type": "integer",
+                            "description": "The capacity of the send buffer in bytes.",
+                            "default": 1024
+                        }
+                    },
+                    "required": [
+                        "AcceptorBacklog",
+                        "DualMode",
+                        "KeepAlive",
+                        "TcpKeepAliveTime",
+                        "TcpKeepAliveInterval",
+                        "TcpKeepAliveRetryCount",
+                        "NoDelay",
+                        "ReuseAddress",
+                        "ExclusiveAddressUse",
+                        "ReceiveBufferLimit",
+                        "ReceiveBufferCapacity",
+                        "SendBufferLimit",
+                        "SendBufferCapacity"
+                    ]
+                },
+                "SslConfig": {
+                    "type": "object",
+                    "description": "The SSL configuration settings for the HTTP server.",
+                    "properties": {
+                        "Enable": {
+                            "type": "boolean",
+                            "description": "The value indicating whether SSL is enabled.",
+                            "default": false
+                        },
+                        "Port": {
+                            "type": "integer",
+                            "description": "The port number used for SSL.",
+                            "minimum": 1,
+                            "maximum": 65535,
+                            "default": 22203
+                        },
+                        "CertFilePath": {
+                            "type": "string",
+                            "description": "The file path to the SSL certificate.",
+                            "default": "",
+                            "examples": [
+                                "C:\\certificates\\ca.pfx",
+                                ".\\ca.pfx",
+                                "./ca.pfx"
+                            ]
+                        },
+                        "CertPassword": {
+                            "type": "string",
+                            "description": "The password for the SSL certificate.",
+                            "default": ""
+                        }
+                    },
+                    "required": [
+                        "Enable"
+                    ],
+                    "if": {
+                        "properties": {
+                            "Enable": {
+                                "const": true
+                            }
+                        }
+                    },
+                    "then": {
+                        "required": [
+                            "Port",
+                            "CertFilePath",
+                            "CertPassword"
+                        ]
+                    }
+                }
+            },
+            "required": [
+                "Enable",
+                "Address",
+                "SessionConfig",
+                "SslConfig"
+            ],
+            "if": {
+                "properties": {
+                    "Enable": {
+                        "const": true
+                    }
+                }
+            },
+            "then": {
+                "required": [
+                    "Port"
+                ]
+            }
+        },
+        "ThreadPoolSize": {
+            "type": "object",
+            "description": "The thread pool size configuration settings.",
+            "properties": {
+                "OtherFiber": {
+                    "type": "integer",
+                    "description": "The size of the other fiber in the thread pool.",
+                    "default": 2
+                },
+                "ReceivedFiber": {
+                    "type": "integer",
+                    "description": "The size of the received fiber in the thread pool.",
+                    "default": 10
+                }
+            },
+            "required": [
+                "OtherFiber",
+                "ReceivedFiber"
+            ]
+        },
+        "AuthToken": {
+            "type": "object",
+            "description": "The auth token settings.",
+            "properties": {
+                "Password": {
+                    "type": "string",
+                    "description": "The password for the authentication token."
+                }
+            },
+            "required": [
+                "Password"
+            ]
+        }
+    },
+    "required": [
+        "Name",
+        "MaxPendingRequest",
+        "MaxSessionPendingRequest",
+        "MaxSessionRequestPerSecond",
+        "HttpServer",
+        "ThreadPoolSize",
+        "AuthToken"
+    ]
+}
