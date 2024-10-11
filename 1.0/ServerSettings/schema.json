@@ -26,65 +26,69 @@
         "TargetRuntime": {
             "type": "string",
             "description": "The runtime environment for the target framework.",
-            "default": "win-x64",
-            "if": {
-                "properties": {
-                    "TargetFramework": {
+            "default": "linux-x64",
+            "oneOf": [
+                {
+                    "if": {
+                        "properties": {
+                            "TargetFramework": {
+                                "enum": [
+                                    "net46",
+                                    "net461",
+                                    "net462",
+                                    "net47",
+                                    "net471",
+                                    "net472",
+                                    "net48",
+                                    "net481"
+                                ]
+                            }
+                        }
+                    },
+                    "then": {
                         "enum": [
-                            "net46",
-                            "net461",
-                            "net462",
-                            "net47",
-                            "net471",
-                            "net472",
-                            "net48",
-                            "net481"
+                            "win"
+                        ]
+                    }
+                },
+                {
+                    "if": {
+                        "properties": {
+                            "TargetFramework": {
+                                "enum": [
+                                    "netcoreapp3.1",
+                                    "net6.0",
+                                    "net8.0"
+                                ]
+                            }
+                        }
+                    },
+                    "then": {
+                        "enum": [
+                            "linux-arm",
+                            "linux-arm64",
+                            "linux-x64",
+                            "osx-arm64",
+                            "osx-x64",
+                            "win-arm",
+                            "win-arm64",
+                            "win-x64",
+                            "win-x86"
                         ]
                     }
                 }
-            },
-            "then": {
-                "enum": [
-                    "win"
-                ]
-            },
-            "else": {
-                "if": {
-                    "properties": {
-                        "TargetFramework": {
-                            "enum": [
-                                "netcoreapp3.1",
-                                "net6.0",
-                                "net8.0"
-                            ]
-                        }
-                    }
-                },
-                "then": {
-                    "enum": [
-                        "linux-arm",
-                        "linux-arm64",
-                        "linux-x64",
-                        "osx-arm64",
-                        "osx-x64",
-                        "win-arm",
-                        "win-arm64",
-                        "win-x64",
-                        "win-x86"
-                    ]
-                }
-            }
+            ]
         },
         "Instances": {
             "type": "array",
             "description": "A list of server instances with configuration details.",
             "default": [
                 {
-                    "Name": "webapiserver",
+                    "Name": "serverApplication",
                     "Enable": true,
-                    "ServerType": "WebApi",
-                    "BinPath": "webapiserver",
-                    "AssemblyName": "XmobiTea.WebApiServer",
+                    "ServerType": "Socket",
+                    "BinPath": "serverApplication",
+                    "AssemblyName": "XmobiTea.SocketServer",
                     "StartupSettingsFilePath": "StartupSettings.json",
                     "Log4NetFilePath": "log4net.config",
                     "StartupType": "auto"
